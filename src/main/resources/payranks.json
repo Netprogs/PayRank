@@ -1,0 +1,49 @@
+{
+  "templates": [
+    {
+      "name": "Template",
+      "format": "<[time] [world] [prefix][player][suffix]> ",
+      "time": "",
+      "worlds": [
+        {
+          "name": "world",
+          "displayName": "&e[World]&f"
+        }
+      ]
+    }
+  ],
+  "payRanks": [
+    {
+      "name": "Newbie",
+      "group": "newbie",
+      "prefix": "&a[Newbie]&f ",
+      "suffix": "",
+      "template": "Template",
+      "price": 10
+    },
+    {
+      "name": "Member",
+      "group": "member",
+      "prefix": "&a[Member]&f ",
+      "suffix": "",
+      "template": "Template",
+      "price": 20
+    },
+    {
+      "name": "Dedicated",
+      "group": "dedicated",
+      "prefix": "&a[Dedicated]&f ",
+      "suffix": "",
+      "template": "Template",
+      "price": 10
+    },
+    {
+      "name": "Professional",
+      "group": "professional",
+      "prefix": "&a[Professional]&f ",
+      "suffix": "",
+      "template": "Template",
+      "price": 10
+    }
+  ]
+}

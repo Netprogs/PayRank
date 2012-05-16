@@ -1,0 +1,53 @@
+name: PayRank
+main: com.netprogs.minecraft.plugins.payrank.PayRankPlugin
+version: 1.1.0
+author: Scott Milne
+description: >
+             Allows a player to purchase specific ranks for money.
+depend: [Vault]
+commands:
+   payRank:
+      description: Multiple commands, use "/payRank help" for details.
+      usage: "/payRank help"
+permissions:
+   payrank.*:
+      description: Gives access to all payrank commands.
+      children:
+         payrank.purchase: true
+         payrank.promote: true
+         payrank.demote: true
+         payrank.give: true
+         payrank.remove: true
+         payrank.current: true
+         payrank.reload: true
+         payrank.list: true
+   payRank.help:
+      description: Ability to purchase a rank.
+      default: true
+   payrank.purchase:
+      description: Ability to purchase a rank.
+      default: op
+   payrank.promote:
+      description: Ability to promote a user to the next rank regardless of cost.
+      default: op
+   payrank.demote:
+      description: Ability to demote a user to the previous rank.
+      default: op
+   payrank.give:
+      description: Ability to give a user the exact rank regardless of level and cost.
+      default: op
+   payrank.remove:
+      description: Ability to remove the current rank from a user leaving them with no rank assigned.
+      default: op
+   payrank.current:
+      description: Ability to see the current rank of yourself.
+      default: op
+   payrank.current.others:
+      description: Ability to see the current rank of another user.
+      default: op
+   payrank.reload:
+      description: Ability to reload the plug-in configurations.
+      default: op
+   payrank.list:
+      description: Ability to list all available ranks.
+      default: op
