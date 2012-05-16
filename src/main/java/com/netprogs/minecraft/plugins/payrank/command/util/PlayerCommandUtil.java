@@ -129,6 +129,10 @@ public abstract class PlayerCommandUtil {
                         // set rankPaidFor so we'll do the actual promotion
                         rankPaidFor = true;
 
+                        if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
+                            logger.info("Purchase successful: " + nextRank.getName() + ", " + nextRank.getPrice());
+                        }
+
                     } else {
 
                         // tell the player that they need more money to purchase the next rank
