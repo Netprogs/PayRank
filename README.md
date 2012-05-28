@@ -26,6 +26,4 @@ Resources
 -------
 BukkitDev --- http://dev.bukkit.org/server-mods/payrank/
 
-Jenkins (Downloads) --- http://www.netprogs.com/job/PayRank/
-
 Latest version download: http://dev.bukkit.org/server-mods/payrank/files/
