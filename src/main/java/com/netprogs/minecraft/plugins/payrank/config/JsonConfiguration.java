@@ -31,6 +31,7 @@ package com.netprogs.minecraft.plugins.payrank.config;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -56,18 +57,34 @@ public abstract class JsonConfiguration<T> extends Configuration<T> {
      */
     protected synchronized void load() {
 
+        InputStream inputStream = null;
+        InputStreamReader reader = null;
+
         try {
 
-            InputStream inputStream = new FileInputStream(getConfigFile());
-            InputStreamReader reader = new InputStreamReader(inputStream);
+            inputStream = new FileInputStream(getConfigFile());
+            reader = new InputStreamReader(inputStream);
 
             setDataObject(json.fromJson(reader, getClassObject()));
 
-            reader.close();
-            inputStream.close();
-
         } catch (Exception ex) {
             ex.printStackTrace();
+
+        } finally {
+
+            try {
+
+                if (reader != null) {
+                    reader.close();
+                }
+
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -76,18 +93,38 @@ public abstract class JsonConfiguration<T> extends Configuration<T> {
      */
     protected synchronized void save() {
 
+        FileWriter fstream = null;
+        BufferedWriter out = null;
+
         try {
 
             String jsonOutput = json.toJson(getDataObject());
 
-            FileWriter fstream = new FileWriter(getConfigFile());
-            BufferedWriter out = new BufferedWriter(fstream);
+            fstream = new FileWriter(getConfigFile());
+            out = new BufferedWriter(fstream);
+
             out.write(jsonOutput);
             out.close();
             fstream.close();
 
         } catch (Exception ex) {
             ex.printStackTrace();
+
+        } finally {
+
+            try {
+
+                if (fstream != null) {
+                    fstream.close();
+                }
+
+                if (out != null) {
+                    out.close();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
