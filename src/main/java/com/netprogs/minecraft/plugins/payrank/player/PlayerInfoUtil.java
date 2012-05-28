@@ -64,9 +64,16 @@ public class PlayerInfoUtil {
             if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
                 logger.info("playerGroup: " + group);
             }
+            if (group.equalsIgnoreCase(groupName)) {
+                if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
+                    logger.info("Matched playerGroup: " + group);
+                }
+                return true;
+            }
         }
 
-        return plugin.getPermission().playerInGroup(nullString, playerName, groupName);
+        // return plugin.getPermission().playerInGroup(nullString, playerName, groupName);
+        return false;
     }
 
     public PlayerInfo getPlayerInfo(JavaPlugin plugin, CommandSender sender, String searchPlayer) {
