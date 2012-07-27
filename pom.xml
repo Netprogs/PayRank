@@ -5,7 +5,7 @@
 
 	<groupId>com.netprogs.minecraft.plugins.payrank</groupId>
 	<artifactId>PayRank</artifactId>
-	<version>2.0.0</version>
+	<version>1.2.1</version>
 	<packaging>jar</packaging>
 	<name>PayRank</name>
 	<url>http://dev.bukkit.org/server-mods/payrank/</url>
@@ -38,7 +38,7 @@
 		<dependency>
 		<groupId>org.bukkit</groupId>
 		<artifactId>craftbukkit</artifactId>
-		<version>1.2.5-R3.0</version>
+		<version>1.2.5-R4.0</version>
 		<type>jar</type>
 		<scope>compile</scope>
 	</dependency>

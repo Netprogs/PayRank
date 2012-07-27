@@ -88,20 +88,26 @@ public class CommandDemote extends PayRankCommand {
         PlayerInfo playerInfo = getPlayerInfoUtil().getPlayerInfo(plugin, sender, playerName);
         if (playerInfo != null) {
 
-            if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
-
-                logger.info("Player: " + playerInfo.getPlayer().getName());
-                logger.info("World: " + playerInfo.getPlayer().getWorld());
-            }
-
             // get their rank positions
             currentRank = playerInfo.getCurrentRank();
             previousRank = playerInfo.getPreviousRank();
 
             if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
 
-                logger.info("currentRank: " + currentRank);
-                logger.info("previousRank: " + previousRank);
+                logger.info("Player: " + playerInfo.getPlayer().getName());
+                logger.info("World: " + playerInfo.getPlayer().getWorld());
+
+                if (currentRank != null) {
+                    logger.info("Current Rank: " + currentRank.getName());
+                } else {
+                    logger.info("Current Rank: null");
+                }
+
+                if (previousRank != null) {
+                    logger.info("Demoted Rank: " + previousRank.getName());
+                } else {
+                    logger.info("Demoted Rank: null");
+                }
             }
 
             if (previousRank != null && currentRank != null) {
@@ -111,34 +117,41 @@ public class CommandDemote extends PayRankCommand {
                         .getName(), currentRank, previousRank);
 
                 // tell the player they've been demoted
-                String demoteCompletedPlayer = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                        .getResource("payrank.demote.completed.player");
+                String demoteCompletedPlayer =
+                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                .getResource("payrank.demote.completed.player");
 
-                demoteCompletedPlayer = demoteCompletedPlayer.replaceAll("<rank>",
-                        ChatColor.BLUE + previousRank.getName() + ChatColor.GREEN);
+                demoteCompletedPlayer =
+                        demoteCompletedPlayer.replaceAll("<rank>", ChatColor.BLUE + previousRank.getName()
+                                + ChatColor.GREEN);
 
                 playerInfo.getPlayer().sendMessage(ChatColor.GREEN + demoteCompletedPlayer);
 
                 // tell the sender that they demoted the player
-                String demoteCompletedSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                        .getResource("payrank.demote.completed.sender");
+                String demoteCompletedSender =
+                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                .getResource("payrank.demote.completed.sender");
 
-                demoteCompletedSender = demoteCompletedSender.replaceAll("<rank>",
-                        ChatColor.BLUE + previousRank.getName() + ChatColor.GREEN);
+                demoteCompletedSender =
+                        demoteCompletedSender.replaceAll("<rank>", ChatColor.BLUE + previousRank.getName()
+                                + ChatColor.GREEN);
 
-                demoteCompletedSender = demoteCompletedSender.replaceAll("<player>", ChatColor.AQUA
-                        + playerInfo.getPlayer().getName() + ChatColor.GREEN);
+                demoteCompletedSender =
+                        demoteCompletedSender.replaceAll("<player>", ChatColor.AQUA + playerInfo.getPlayer().getName()
+                                + ChatColor.GREEN);
 
                 sender.sendMessage(ChatColor.GREEN + demoteCompletedSender);
 
             } else {
 
                 // tell the sender that they can't be demoted any further
-                String demoteMinimumSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                        .getResource("payrank.demote.lowestRankReached.sender");
+                String demoteMinimumSender =
+                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                .getResource("payrank.demote.lowestRankReached.sender");
 
-                demoteMinimumSender = demoteMinimumSender.replaceAll("<player>", ChatColor.AQUA
-                        + playerInfo.getPlayer().getName() + ChatColor.GREEN);
+                demoteMinimumSender =
+                        demoteMinimumSender.replaceAll("<player>", ChatColor.AQUA + playerInfo.getPlayer().getName()
+                                + ChatColor.GREEN);
 
                 sender.sendMessage(ChatColor.GREEN + demoteMinimumSender);
             }
@@ -151,8 +164,8 @@ public class CommandDemote extends PayRankCommand {
         help.setCommand(getCommandName());
         help.setArguments("<player>");
 
-        String demoteHelp = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                .getResource("payrank.demote.help");
+        String demoteHelp =
+                PluginConfig.getInstance().getConfig(ResourcesConfig.class).getResource("payrank.demote.help");
 
         help.setDescription(demoteHelp);
 

@@ -54,12 +54,52 @@ public class PlayerInfoUtil {
 
     public boolean playerInGroup(PayRankPlugin plugin, World world, String playerName, String groupName) {
 
-        // TODO: Passing world as NULL. I may need to revisit this later.
-        // We want to pass in NULL here because we don't care about what world they're in, we just want to know
-        // if they've been assigned the group at all.
-        final String nullString = null;
+        boolean foundGroup = false;
 
-        String[] groupList = plugin.getPermission().getPlayerGroups(nullString, playerName);
+        // check to see if we can find the group in the world-based permissions
+        String[] worldGroupList = plugin.getPermission().getPlayerGroups(world.getName(), playerName);
+        foundGroup = checkGroups(groupName, worldGroupList);
+        if (foundGroup) {
+            return foundGroup;
+        }
+
+        // If we're still here, it means we couldn't find world-based permissions.
+        // Let's check global by sending in a null world.
+        final String nullString = null;
+        String[] globalGroupList = plugin.getPermission().getPlayerGroups(nullString, playerName);
+        foundGroup = checkGroups(groupName, globalGroupList);
+        if (foundGroup) {
+            return foundGroup;
+        }
+
+        // if we're still here, it means we couldn't find anything at all
+        if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
+            logger.info("playerInGroup not found: [" + playerName + ", " + groupName + "]");
+        }
+
+        return false;
+
+        // As much as I would like to use the following, it seems PermissionsEx has issues with it
+        /*
+        boolean foundGroup = false;
+
+        foundGroup = plugin.getPermission().playerInGroup(world.getName(), playerName, groupName);
+        if (foundGroup) {
+            return foundGroup;
+        }
+
+        final String nullString = null;
+        foundGroup = plugin.getPermission().playerInGroup(nullString, playerName, groupName);
+        if (foundGroup) {
+            return foundGroup;
+        }
+
+        return false;
+        */
+    }
+
+    private boolean checkGroups(String groupName, String[] groupList) {
+
         for (String group : groupList) {
             if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
                 logger.info("playerGroup: " + group);
@@ -72,7 +112,6 @@ public class PlayerInfoUtil {
             }
         }
 
-        // return plugin.getPermission().playerInGroup(nullString, playerName, groupName);
         return false;
     }
 
@@ -136,6 +175,17 @@ public class PlayerInfoUtil {
                 }
             }
 
+            // if we have a previous rank, but not a current one, then we've cycled through them all
+            // set the previous rank to null also
+            if (previousRank != null && currentRank == null) {
+
+                if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
+                    logger.info("No current rank, setting previous rank to null. ");
+                }
+
+                previousRank = null;
+            }
+
             if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
 
                 if (previousRank != null) {
@@ -176,11 +226,13 @@ public class PlayerInfoUtil {
                     logger.info("Player " + offlinePlayer.getName() + " appears to be offline.");
                 }
 
-                String playerOfflineSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                        .getResource("payrank.error.offlinePlayer.sender");
+                String playerOfflineSender =
+                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                .getResource("payrank.error.offlinePlayer.sender");
 
-                playerOfflineSender = playerOfflineSender.replaceAll("<player>",
-                        ChatColor.BLUE + offlinePlayer.getName() + ChatColor.RED);
+                playerOfflineSender =
+                        playerOfflineSender.replaceAll("<player>", ChatColor.BLUE + offlinePlayer.getName()
+                                + ChatColor.RED);
 
                 sender.sendMessage(ChatColor.RED + playerOfflineSender);
 
@@ -191,11 +243,12 @@ public class PlayerInfoUtil {
                     logger.info("Could not find find player: " + searchPlayer);
                 }
 
-                String cannotFindPlayerSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                        .getResource("payrank.error.cannotFindPlayer.sender");
+                String cannotFindPlayerSender =
+                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                .getResource("payrank.error.cannotFindPlayer.sender");
 
-                cannotFindPlayerSender = cannotFindPlayerSender.replaceAll("<player>", ChatColor.BLUE + searchPlayer
-                        + ChatColor.RED);
+                cannotFindPlayerSender =
+                        cannotFindPlayerSender.replaceAll("<player>", ChatColor.BLUE + searchPlayer + ChatColor.RED);
 
                 sender.sendMessage(ChatColor.RED + cannotFindPlayerSender);
             }

@@ -92,8 +92,8 @@ public class PlayerChatListener implements Listener {
             }
 
             // get the list of templates
-            Map<String, PayRankTemplate> templates = PluginConfig.getInstance().getConfig(PayRanksConfig.class)
-                    .getTemplates();
+            Map<String, PayRankTemplate> templates =
+                    PluginConfig.getInstance().getConfig(PayRanksConfig.class).getTemplates();
 
             // get the desired template for the users current rank
             PayRankTemplate template = templates.get(currentUserRank.getTemplate());
@@ -136,12 +136,12 @@ public class PlayerChatListener implements Listener {
                 // do [prefix] and [suffix] and [player]
                 format = format.replaceAll("\\[prefix\\]", currentUserRank.getPrefix());
                 format = format.replaceAll("\\[suffix\\]", currentUserRank.getSuffix());
-                format = format.replaceAll("\\[player\\]", player.getName());
+                format = format.replaceAll("\\[player\\]", player.getDisplayName());
 
                 // finally, replace all the & signs with \u00A7 ($2 is the letter after &)
                 format = format.replaceAll("(&([A-Fa-f0-9L-Ol-o]))", "\u00A7$2");
 
-                // now tell the even to use our formatted name instead
+                // now use our formatted name instead
                 event.setFormat(format + message);
             }
 

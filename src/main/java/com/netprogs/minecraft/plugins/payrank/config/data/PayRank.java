@@ -28,8 +28,6 @@ package com.netprogs.minecraft.plugins.payrank.config.data;
  * either expressed or implied, of anybody else.
  */
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "PayRank")
@@ -41,8 +39,8 @@ public class PayRank {
     private String suffix;
     private String template;
     private double price;
+    private int experience;
 
-    @XmlElement(name = "Prefix")
     public String getPrefix() {
         return prefix;
     }
@@ -51,7 +49,6 @@ public class PayRank {
         this.prefix = prefix;
     }
 
-    @XmlElement(name = "Suffix")
     public String getSuffix() {
         return suffix;
     }
@@ -60,7 +57,6 @@ public class PayRank {
         this.suffix = suffix;
     }
 
-    @XmlAttribute(name = "price")
     public double getPrice() {
         return price;
     }
@@ -69,7 +65,14 @@ public class PayRank {
         this.price = price;
     }
 
-    @XmlAttribute(name = "group")
+    public int getExperience() {
+        return experience;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
+
     public String getGroup() {
         return group;
     }
@@ -78,7 +81,6 @@ public class PayRank {
         this.group = group;
     }
 
-    @XmlAttribute(name = "name")
     public String getName() {
         return name;
     }
@@ -87,7 +89,6 @@ public class PayRank {
         this.name = name;
     }
 
-    @XmlAttribute(name = "template")
     public String getTemplate() {
         return template;
     }

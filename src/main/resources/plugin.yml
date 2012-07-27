@@ -1,9 +1,9 @@
 name: PayRank
 main: com.netprogs.minecraft.plugins.payrank.PayRankPlugin
-version: 1.1.0
+version: 1.2.1
 author: Scott Milne
 description: >
-             Allows a player to purchase specific ranks for money.
+             Allows a player to purchase specific ranks for money or xp.
 depend: [Vault]
 commands:
    payRank:

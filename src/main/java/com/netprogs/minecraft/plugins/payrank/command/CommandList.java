@@ -15,6 +15,7 @@ import com.netprogs.minecraft.plugins.payrank.config.ResourcesConfig;
 import com.netprogs.minecraft.plugins.payrank.config.SettingsConfig;
 import com.netprogs.minecraft.plugins.payrank.config.data.PayRank;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -73,8 +74,8 @@ public class CommandList extends PayRankCommand {
         // for each of the ranks, display them and their cost
         List<PayRank> ranks = PluginConfig.getInstance().getConfig(PayRanksConfig.class).getPayRanks();
 
-        String listHeader = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                .getResource("payrank.list.header");
+        String listHeader =
+                PluginConfig.getInstance().getConfig(ResourcesConfig.class).getResource("payrank.list.header");
 
         listHeader = listHeader.replaceAll("<plugin>", plugin.getPluginName());
 
@@ -108,7 +109,26 @@ public class CommandList extends PayRankCommand {
             }
 
             // send the rank
-            sender.sendMessage(color + rank.getName() + ": " + rank.getPrice());
+            String cost = ": ";
+            String price = "";
+            if (rank.getPrice() != 0) {
+                price += "$" + rank.getPrice();
+                if (rank.getExperience() != 0) {
+                    price += ", ";
+                }
+            }
+
+            if (rank.getExperience() != 0) {
+                price += rank.getExperience() + "xp";
+            }
+
+            if (StringUtils.isEmpty(price)) {
+                price = "$0, 0xp";
+            }
+
+            cost += price;
+
+            sender.sendMessage(color + rank.getName() + cost);
         }
     }
 

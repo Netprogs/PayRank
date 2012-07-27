@@ -88,16 +88,18 @@ public abstract class PlayerCommandUtil {
                 // if it's a purchase, that means the player requested promote
                 if (doPurchase) {
 
-                    String highestRankPlayer = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                            .getResource("payrank.promote.highestRankReached.player");
+                    String highestRankPlayer =
+                            PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                    .getResource("payrank.promote.highestRankReached.player");
 
                     playerInfo.getPlayer().sendMessage(ChatColor.GOLD + highestRankPlayer);
 
                 } else {
 
                     // otherwise, we'll assume admin sent it
-                    String highestRankSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                            .getResource("payrank.promote.highestRankReached.sender");
+                    String highestRankSender =
+                            PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                    .getResource("payrank.promote.highestRankReached.sender");
 
                     highestRankSender = highestRankSender.replaceAll("<player>", playerInfo.getPlayer().getName());
 
@@ -111,48 +113,99 @@ public abstract class PlayerCommandUtil {
             if (nextRank != null) {
 
                 // otherwise, lets promote them
-                boolean rankPaidFor = false;
+                boolean rankPaidFor = true;
 
                 // Check to see if we need to do the purchase
                 if (doPurchase) {
 
                     if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
-                        logger.info("Attempting to make purchase: " + nextRank.getName() + ", " + nextRank.getPrice());
+                        logger.info("Attempting to make purchase: " + nextRank.getName() + ", " + nextRank.getPrice()
+                                + ", " + nextRank.getExperience());
                     }
 
-                    // First, let's check to see if they can afford the promotion
-                    if (plugin.getEconomy().has(playerInfo.getPlayer().getName(), nextRank.getPrice())) {
+                    // If a price was given, then attempt to obtain it
+                    if (nextRank.getExperience() != 0) {
 
-                        // okay, they can afford it, lets take their money
-                        plugin.getEconomy().withdrawPlayer(playerInfo.getPlayer().getName(), nextRank.getPrice());
+                        // get their current xp
+                        int currentXp = playerInfo.getPlayer().getTotalExperience();
 
-                        // set rankPaidFor so we'll do the actual promotion
-                        rankPaidFor = true;
+                        if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
+                            logger.info("currentXp: " + currentXp);
+                        }
 
-                    } else {
+                        // see if they have enough to cover the cost
+                        if (currentXp >= nextRank.getExperience()) {
 
-                        // tell the player that they need more money to purchase the next rank
-                        if (playerInfo.getPlayer() != null) {
+                            // update their current xp
+                            playerInfo.getPlayer().setTotalExperience(currentXp - nextRank.getExperience());
 
-                            String notEnoughFundsPlayer = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                                    .getResource("payrank.promote.notEnoughFunds.player");
+                            if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
+                                logger.info("updatedXp: " + playerInfo.getPlayer().getTotalExperience());
+                            }
 
-                            notEnoughFundsPlayer = notEnoughFundsPlayer.replaceAll("<price>",
-                                    ChatColor.BLUE + Double.toString(nextRank.getPrice()) + ChatColor.RED);
+                        } else {
 
-                            notEnoughFundsPlayer = notEnoughFundsPlayer.replaceAll("<rank>",
-                                    ChatColor.BLUE + nextRank.getName() + ChatColor.RED);
+                            // tell the player that they need more xp to purchase the next rank
+                            if (playerInfo.getPlayer() != null) {
 
-                            String message = ChatColor.RED + notEnoughFundsPlayer;
+                                String notEnoughFundsPlayer =
+                                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                                .getResource("payrank.promote.notEnoughFunds.player");
 
-                            playerInfo.getPlayer().sendMessage(message);
+                                notEnoughFundsPlayer =
+                                        notEnoughFundsPlayer.replaceAll("<price>",
+                                                ChatColor.BLUE + Double.toString(nextRank.getExperience()) + "xp"
+                                                        + ChatColor.RED);
+
+                                notEnoughFundsPlayer =
+                                        notEnoughFundsPlayer.replaceAll("<rank>", ChatColor.BLUE + nextRank.getName()
+                                                + ChatColor.RED);
+
+                                String message = ChatColor.RED + notEnoughFundsPlayer;
+
+                                playerInfo.getPlayer().sendMessage(message);
+
+                                // they didn't have enough, so set to false
+                                rankPaidFor = false;
+                            }
                         }
                     }
 
-                } else {
+                    // If a price was given, then attempt to obtain it
+                    if (nextRank.getPrice() != 0) {
 
-                    // by-passed the purchase, so we'll just pretend we did it
-                    rankPaidFor = true;
+                        // First, let's check to see if they can afford the promotion
+                        if (plugin.getEconomy().has(playerInfo.getPlayer().getName(), nextRank.getPrice())) {
+
+                            // okay, they can afford it, lets take their money
+                            plugin.getEconomy().withdrawPlayer(playerInfo.getPlayer().getName(), nextRank.getPrice());
+
+                        } else {
+
+                            // tell the player that they need more money to purchase the next rank
+                            if (playerInfo.getPlayer() != null) {
+
+                                String notEnoughFundsPlayer =
+                                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                                .getResource("payrank.promote.notEnoughFunds.player");
+
+                                notEnoughFundsPlayer =
+                                        notEnoughFundsPlayer.replaceAll("<price>",
+                                                ChatColor.BLUE + Double.toString(nextRank.getPrice()) + ChatColor.RED);
+
+                                notEnoughFundsPlayer =
+                                        notEnoughFundsPlayer.replaceAll("<rank>", ChatColor.BLUE + nextRank.getName()
+                                                + ChatColor.RED);
+
+                                String message = ChatColor.RED + notEnoughFundsPlayer;
+
+                                playerInfo.getPlayer().sendMessage(message);
+
+                                // they didn't have enough, so set to false
+                                rankPaidFor = false;
+                            }
+                        }
+                    }
                 }
 
                 // If it's been paid for (or by-passed), do the promotion now
@@ -165,11 +218,13 @@ public abstract class PlayerCommandUtil {
                     // tell the player they've been promoted
                     if (playerInfo.getPlayer() != null) {
 
-                        String completedPlayer = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                                .getResource("payrank.promote.completed.player");
+                        String completedPlayer =
+                                PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                        .getResource("payrank.promote.completed.player");
 
-                        completedPlayer = completedPlayer.replaceAll("<rank>", ChatColor.BLUE + nextRank.getName()
-                                + ChatColor.GREEN);
+                        completedPlayer =
+                                completedPlayer.replaceAll("<rank>", ChatColor.BLUE + nextRank.getName()
+                                        + ChatColor.GREEN);
 
                         String message = ChatColor.GREEN + completedPlayer;
 
@@ -179,14 +234,17 @@ public abstract class PlayerCommandUtil {
                     // tell the sender that they've been promoted (if not the player)
                     if (sender != playerInfo.getPlayer()) {
 
-                        String completedSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                                .getResource("payrank.promote.completed.sender");
+                        String completedSender =
+                                PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                        .getResource("payrank.promote.completed.sender");
 
-                        completedSender = completedSender.replaceAll("<player>", ChatColor.AQUA
-                                + playerInfo.getPlayer().getName() + ChatColor.GREEN);
+                        completedSender =
+                                completedSender.replaceAll("<player>", ChatColor.AQUA
+                                        + playerInfo.getPlayer().getName() + ChatColor.GREEN);
 
-                        completedSender = completedSender.replaceAll("<rank>", ChatColor.BLUE + nextRank.getName()
-                                + ChatColor.GREEN);
+                        completedSender =
+                                completedSender.replaceAll("<rank>", ChatColor.BLUE + nextRank.getName()
+                                        + ChatColor.GREEN);
 
                         sender.sendMessage(ChatColor.GREEN + completedSender);
                     }

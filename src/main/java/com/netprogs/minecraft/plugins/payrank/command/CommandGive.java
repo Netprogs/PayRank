@@ -89,27 +89,43 @@ public class CommandGive extends PayRankCommand {
         if (playerInfo != null) {
 
             // get the rank we want to assign to them
-            PayRank giveRank = PluginConfig.getInstance().getConfig(PayRanksConfig.class)
-                    .getPayRankMatching(searchRank);
+            PayRank giveRank =
+                    PluginConfig.getInstance().getConfig(PayRanksConfig.class).getPayRankMatching(searchRank);
 
             if (PluginConfig.getInstance().getConfig(SettingsConfig.class).isLoggingDebug()) {
 
                 logger.info("Player: " + playerInfo.getPlayer());
                 logger.info("World: " + playerInfo.getPlayer().getWorld());
                 logger.info("Name: " + playerInfo.getPlayer().getName());
-                logger.info("Previous Rank: " + playerInfo.getPreviousRank());
-                logger.info("Current Rank: " + playerInfo.getCurrentRank());
-                logger.info("Next Rank: " + playerInfo.getNextRank());
+
+                if (playerInfo.getPreviousRank() != null) {
+                    logger.info("Previous Rank: " + playerInfo.getPreviousRank().getName());
+                } else {
+                    logger.info("Previous Rank: null");
+                }
+
+                if (playerInfo.getCurrentRank() != null) {
+                    logger.info("Current Rank: " + playerInfo.getCurrentRank().getName());
+                } else {
+                    logger.info("Previous Rank: null");
+                }
+
+                if (playerInfo.getNextRank() != null) {
+                    logger.info("Next Rank: " + playerInfo.getNextRank().getName());
+                } else {
+                    logger.info("Previous Rank: null");
+                }
             }
 
             // check to make sure it's not the same rank
             if (giveRank == playerInfo.getCurrentRank()) {
 
-                String alreadyHasRankSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                        .getResource("payrank.give.alreadyHasRank.sender");
+                String alreadyHasRankSender =
+                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                .getResource("payrank.give.alreadyHasRank.sender");
 
-                alreadyHasRankSender = alreadyHasRankSender.replaceAll("<rank>", ChatColor.BLUE + giveRank.getName()
-                        + ChatColor.RED);
+                alreadyHasRankSender =
+                        alreadyHasRankSender.replaceAll("<rank>", ChatColor.BLUE + giveRank.getName() + ChatColor.RED);
 
                 // give the error back to the caller
                 sender.sendMessage(ChatColor.RED + alreadyHasRankSender);
@@ -122,25 +138,28 @@ public class CommandGive extends PayRankCommand {
                         .getName(), playerInfo.getCurrentRank(), giveRank);
 
                 // tell the user the player has been promoted
-                String completedSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                        .getResource("payrank.give.completed.sender");
+                String completedSender =
+                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                .getResource("payrank.give.completed.sender");
 
-                completedSender = completedSender.replaceAll("<rank>", ChatColor.BLUE + giveRank.getName()
-                        + ChatColor.GREEN);
+                completedSender =
+                        completedSender.replaceAll("<rank>", ChatColor.BLUE + giveRank.getName() + ChatColor.GREEN);
 
-                completedSender = completedSender.replaceAll("<player>", ChatColor.AQUA
-                        + playerInfo.getPlayer().getName() + ChatColor.GREEN);
+                completedSender =
+                        completedSender.replaceAll("<player>", ChatColor.AQUA + playerInfo.getPlayer().getName()
+                                + ChatColor.GREEN);
 
                 sender.sendMessage(ChatColor.GREEN + completedSender);
 
                 // tell the player they've been changed if they're online
                 if (playerInfo.getPlayer() != null) {
 
-                    String completedPlayer = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                            .getResource("payrank.give.completed.player");
+                    String completedPlayer =
+                            PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                    .getResource("payrank.give.completed.player");
 
-                    completedPlayer = completedPlayer.replaceAll("<rank>", ChatColor.BLUE + giveRank.getName()
-                            + ChatColor.GREEN);
+                    completedPlayer =
+                            completedPlayer.replaceAll("<rank>", ChatColor.BLUE + giveRank.getName() + ChatColor.GREEN);
 
                     String message = ChatColor.GREEN + completedPlayer;
 
@@ -150,11 +169,12 @@ public class CommandGive extends PayRankCommand {
             } else {
 
                 // give the error back to the caller
-                String cannotFindRankSender = PluginConfig.getInstance().getConfig(ResourcesConfig.class)
-                        .getResource("payrank.give.alreadyHasRank.sender");
+                String cannotFindRankSender =
+                        PluginConfig.getInstance().getConfig(ResourcesConfig.class)
+                                .getResource("payrank.give.cannotFindRank.sender");
 
-                cannotFindRankSender = cannotFindRankSender.replaceAll("<rank>", ChatColor.BLUE + searchRank
-                        + ChatColor.RED);
+                cannotFindRankSender =
+                        cannotFindRankSender.replaceAll("<rank>", ChatColor.BLUE + searchRank + ChatColor.RED);
 
                 sender.sendMessage(ChatColor.RED + cannotFindRankSender);
             }

@@ -29,6 +29,8 @@ package com.netprogs.minecraft.plugins.payrank;
  */
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.netprogs.minecraft.plugins.payrank.command.PayRankDispatcher;
@@ -55,6 +57,9 @@ public class PayRankPlugin extends JavaPlugin {
     private static Economy economy = null;
     private static Permission permission = null;
 
+    // used for sending completely anonymous data to http://mcstats.org for usage tracking
+    private Metrics metrics;
+
     public void onEnable() {
 
         // report that this plug in is being loaded
@@ -78,6 +83,14 @@ public class PayRankPlugin extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PlayerChatListener(this), this);
         }
 
+        // start up the metrics engine
+        try {
+            metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Error while enabling Metrics.");
+        }
+
         logger.info("[" + pdfFile.getName() + "] v" + pdfFile.getVersion() + " has been enabled.");
     }
 
@@ -91,8 +104,8 @@ public class PayRankPlugin extends JavaPlugin {
 
     private void setupEconomy() {
 
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
-                Economy.class);
+        RegisteredServiceProvider<Economy> economyProvider =
+                getServer().getServicesManager().getRegistration(Economy.class);
 
         if (economyProvider != null) {
             economy = (Economy) economyProvider.getProvider();
@@ -101,8 +114,8 @@ public class PayRankPlugin extends JavaPlugin {
 
     public void setupPermission() {
 
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(
-                Permission.class);
+        RegisteredServiceProvider<Permission> permissionProvider =
+                getServer().getServicesManager().getRegistration(Permission.class);
 
         if (permissionProvider != null) {
             permission = (Permission) permissionProvider.getProvider();
